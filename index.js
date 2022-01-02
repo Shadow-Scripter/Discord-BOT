@@ -2,8 +2,10 @@ const Discord = require('discord.js');
 const client = new Discord.Client();
 
 
-client.on('ready', () => {
+
+client.once('ready', () => {
 	console.log('ready!');
+  client.user.setPresence({ activity: {name: '!help', type: 'LISTENING'}, status: 'idle'})
 });
 
 const prefix = '!'; // you can customize the prefix here
@@ -11,6 +13,9 @@ const prefix = '!'; // you can customize the prefix here
 const leveling = require('discord-leveling'); // required for leveling
 
 let db = require('quick.db'); // for database (economy, etc)
+
+
+
 
 client.on('message', async message => {
 	if (!message.content.startsWith(prefix) || message.author.bot) return;
@@ -101,8 +106,8 @@ client.on('message', async message => {
 
 	if (command === 'ping') {
 		let ping = message.createdTimeStamp - message.createdTimeStamp;
-		message.channel.send(`pong! my ping is ${ping.time}`);
-	} // shows the bot ping/ms
+		message.channel.send(`pong! my ping is ${Date.now() - message.createdTimestamp}ms.`);
+	} // shows the bot ping/ms 
 
 	if (command === 'level') {
 		let user =
@@ -142,8 +147,7 @@ client.on('message', async message => {
 		if (warnings === null || warnings === 0) warnings = '0'; // If No Warning Are Their
 
 		let embed = new Discord.MessageEmbed().setColor('RANDOM').setDescription(`
-<@${user.id}> Has ${warnings} Warnings
-        `);
+<@${user.id}> Has ${warnings} Warnings`);
 		message.channel.send(embed);
 	}
 
@@ -177,7 +181,7 @@ client.on('message', async message => {
 		if (!user)
 			return message.channel.send('Please state a user to check the balance!');
 
-		let bal = db.fetch(`money_${message.guild.id}_${user.id}`); // You Can Keep `money_${message.guild.id}_${user.id}` If You Want Different Amount In, Eg:- If I Am In 2 Servers And You Keep `money_${user.id}` I Will Have Same Money In Both Servers But If you Keep `money_${message.guild.id}_${user.id}` Then I Will Have Different Amount In Both Servers
+		let bal = db.fetch(`money_${user.id}`); // You Can Keep `money_${message.guild.id}_${user.id}` If You Want Different Amount In, Eg:- If I Am In 2 Servers And You Keep `money_${user.id}` I Will Have Same Money In Both Servers But If you Keep `money_${message.guild.id}_${user.id}` Then I Will Have Different Amount In Both Servers
 		if (bal === null) bal = '0'; // If No Money In Wallet
 
 		const embed = new Discord.MessageEmbed()
